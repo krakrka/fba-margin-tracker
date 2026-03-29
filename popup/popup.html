@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>FBA Tracker</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <h2>📦 FBA Tracker Pro</h2>
+    
+    <div class="settings-panel">
+        <div class="input-group">
+            <label>TVA (%)</label>
+            <input type="number" id="setting-tva" step="0.1">
+        </div>
+        <div class="input-group">
+            <label>Com. Amazon (%)</label>
+            <input type="number" id="setting-referral" step="0.1">
+        </div>
+        <div class="input-group">
+            <label>Frais FBA Fixes (€)</label>
+            <input type="number" id="setting-fba" step="0.1">
+        </div>
+        <div class="input-group">
+            <label>Coût Produit (%)</label>
+            <input type="number" id="setting-cost" step="0.1">
+        </div>
+        <button id="save-settings-btn" class="secondary-btn">💾 Sauvegarder les paramètres</button>
+        <span id="save-confirm" class="confirm-text"></span>
+    </div>
+
+    <div class="data-card">
+        <div class="data-row">
+            <span>Prix de vente :</span>
+            <span class="price" id="display-price">-- €</span>
+        </div>
+        <div class="data-row">
+            <span>Marge Nette :</span>
+            <span class="margin" id="display-margin">--</span>
+        </div>
+    </div>
+
+    <button id="calc-btn" class="primary-btn">📊 Calculer la rentabilité</button>
+    <button id="stock-btn" class="danger-btn">🕵️ Espionner le Stock (999)</button>
+    <div id="stock-result"></div>
+
+    <script src="popup.js"></script>
+</body>
+</html>
