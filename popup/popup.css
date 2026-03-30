@@ -43,3 +43,14 @@
     margin-left: 5px;
     font-weight: bold;
 }
+/* Le bouton Sourcing AliExpress */
+.source-btn {
+    background-color: #f97316; /* Orange AliExpress */
+    color: white;
+    border: none;
+    margin-top: 5px; /* Un petit espace avec le bouton du dessus */
+}
+
+.source-btn:hover {
+    background-color: #ea580c;
+}

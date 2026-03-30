@@ -1,15 +1,16 @@
 // popup/popup.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialisation des éléments du DOM
+    // 1. Initialisation des éléments de l'interface
     const ui = {
         calcBtn: document.getElementById('calc-btn'),
         stockBtn: document.getElementById('stock-btn'),
+        sourceBtn: document.getElementById('source-btn'), // Le nouveau bouton orange
         displayPrice: document.getElementById('display-price'),
         displayMargin: document.getElementById('display-margin'),
         stockResult: document.getElementById('stock-result'),
         
-        // Paramètres
+        // Paramètres de l'utilisateur
         tvaInput: document.getElementById('setting-tva'),
         referralInput: document.getElementById('setting-referral'),
         fbaInput: document.getElementById('setting-fba'),
@@ -18,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveConfirm: document.getElementById('save-confirm')
     };
 
-    // 2. Valeurs par défaut (si l'utilisateur n'a encore rien sauvegardé)
+    // Valeurs par défaut
     const defaultSettings = {
         tvaRate: 20.0,
         referralFee: 15.0,
@@ -26,10 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
         costPct: 25.0
     };
 
-    let currentPrice = 0; // Stocke le prix pour recalculer sans recharger la page
+    let currentPrice = 0; 
 
     /**
-     * Charge les paramètres depuis le stockage Chrome au démarrage
+     * Charge les paramètres sauvegardés au démarrage
      */
     function loadSettings() {
         chrome.storage.sync.get(defaultSettings, (settings) => {
@@ -55,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ui.saveConfirm.textContent = "✔ Sauvegardé";
             setTimeout(() => { ui.saveConfirm.textContent = ""; }, 2000);
             
-            // Si un prix a déjà été scanné, on recalcule immédiatement la marge
             if (currentPrice > 0) {
                 renderMargin(currentPrice, newSettings);
             }
@@ -63,10 +63,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /**
-     * Formule de calcul de la marge (Logique métier isolée)
+     * Moteur de calcul financier
      */
     function calculateFBAMargin(price, settings) {
-        // Conversion des pourcentages en décimales (ex: 20% -> 0.20)
         const tva = settings.tvaRate / 100;
         const referral = settings.referralFee / 100;
         const cost = settings.costPct / 100;
@@ -79,21 +78,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     /**
-     * Met à jour l'interface visuelle avec les résultats
+     * Met à jour l'affichage de la marge
      */
     function renderMargin(price, settings) {
-        currentPrice = price; // Sauvegarde en mémoire
+        currentPrice = price; 
         ui.displayPrice.textContent = price.toFixed(2) + " €";
         
         let margin = calculateFBAMargin(price, settings);
         ui.displayMargin.textContent = margin.toFixed(2) + " €";
         
-        // Indicateur visuel de rentabilité
         ui.displayMargin.style.color = margin > 0 ? "#16a34a" : "#dc2626";
     }
 
     /**
-     * Action : Calculer la rentabilité (Bouton Principal)
+     * ACTION 1 : Calculer la rentabilité
      */
     ui.calcBtn.addEventListener('click', () => {
         ui.displayPrice.textContent = "Calcul...";
@@ -116,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                // Récupération des paramètres actuels avant de calculer
                 chrome.storage.sync.get(defaultSettings, (settings) => {
                     renderMargin(response.price, settings);
                 });
@@ -125,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     /**
-     * Action : Espionner le Stock (La Killer Feature)
+     * ACTION 2 : Espionner le Stock
      */
     ui.stockBtn.addEventListener('click', () => {
         ui.stockResult.textContent = "Injection en cours...";
@@ -150,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 if (response && response.status === "success") {
-                    ui.stockResult.textContent = "✔ Panier mis à jour (Vérifiez Amazon !)";
+                    ui.stockResult.textContent = "✔ Panier mis à jour !";
                     ui.stockResult.style.color = "#16a34a";
                 } else {
                     ui.stockResult.textContent = "Bouton d'ajout introuvable.";
@@ -160,6 +157,40 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 3. Démarrage
+    /**
+     * ACTION 3 : Sourcing AliExpress
+     */
+    ui.sourceBtn.addEventListener('click', () => {
+        ui.stockResult.textContent = "Recherche du fournisseur...";
+        ui.stockResult.style.color = "#f97316"; // Orange
+
+        chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+            let activeTab = tabs[0];
+            
+            if (!activeTab.url.includes("amazon.")) {
+                ui.stockResult.textContent = "Allez sur une page produit Amazon.";
+                ui.stockResult.style.color = "#dc2626";
+                return;
+            }
+
+            chrome.tabs.sendMessage(activeTab.id, {action: "getTitle"}, (response) => {
+                if (chrome.runtime.lastError || !response || !response.title) {
+                    ui.stockResult.textContent = "Titre introuvable sur cette page.";
+                    ui.stockResult.style.color = "#dc2626";
+                    return;
+                }
+
+                ui.stockResult.textContent = "✔ Redirection AliExpress !";
+                ui.stockResult.style.color = "#16a34a";
+                
+                let searchQuery = encodeURIComponent(response.title);
+                let aliExpressUrl = `https://www.aliexpress.com/wholesale?SearchText=${searchQuery}`;
+                
+                chrome.tabs.create({ url: aliExpressUrl });
+            });
+        });
+    });
+
+    // Lancement de l'app
     loadSettings();
 });
