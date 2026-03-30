@@ -2,48 +2,58 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>FBA Tracker</title>
+    <title>E-commerce Margin Tracker Pro</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-    <h2>📦 FBA Tracker Pro</h2>
+    <div class="header-top">
+        <h2 data-i18n="title_main">🚀 Tracker Pro</h2>
+        <select id="lang-selector" class="lang-select">
+            <option value="fr">🇫🇷 FR</option>
+            <option value="en">🇬🇧 EN</option>
+        </select>
+    </div>
     
+    <div class="tabs">
+        <button id="tab-fba" class="tab active" data-i18n="tab_fba">📦 Amazon FBA</button>
+        <button id="tab-ds" class="tab" data-i18n="tab_ds">🌐 Shopify Dropshipping</button>
+    </div>
+
     <div class="settings-panel">
-        <div class="input-group">
-            <label>TVA (%)</label>
-            <input type="number" id="setting-tva" step="0.1">
+        <div id="settings-fba">
+            <div class="input-group"><label data-i18n="label_tva">TVA (%)</label><input type="number" id="setting-tva" step="0.1"></div>
+            <div class="input-group"><label data-i18n="label_ref">Com. Amazon (%)</label><input type="number" id="setting-referral" step="0.1"></div>
+            <div class="input-group"><label data-i18n="label_fba_fee">Frais FBA (€/$)</label><input type="number" id="setting-fba" step="0.1"></div>
         </div>
-        <div class="input-group">
-            <label>Com. Amazon (%)</label>
-            <input type="number" id="setting-referral" step="0.1">
+
+        <div id="settings-ds" style="display: none;">
+            <div class="input-group"><label data-i18n="label_tva">TVA (%)</label><input type="number" id="setting-ds-tva" step="0.1"></div>
+            <div class="input-group"><label data-i18n="label_cpa">CPA (Pub FB/TikTok)</label><input type="number" id="setting-ds-cpa" step="0.1"></div>
+            <div class="input-group"><label data-i18n="label_stripe">Frais Stripe/PayPal (%)</label><input type="number" id="setting-ds-stripe" step="0.1"></div>
+            <div class="input-group"><label data-i18n="label_ship">Livraison Chine</label><input type="number" id="setting-ds-shipping" step="0.1"></div>
         </div>
-        <div class="input-group">
-            <label>Frais FBA Fixes (€)</label>
-            <input type="number" id="setting-fba" step="0.1">
-        </div>
-        <div class="input-group">
-            <label>Coût Produit (%)</label>
+
+        <div class="input-group" style="margin-top: 10px; border-top: 1px solid #d1d5db; padding-top: 10px;">
+            <label data-i18n="label_cost">Coût Produit Usine (%)</label>
             <input type="number" id="setting-cost" step="0.1">
         </div>
-        <button id="save-settings-btn" class="secondary-btn">💾 Sauvegarder les paramètres</button>
+
+        <button id="save-settings-btn" class="secondary-btn" data-i18n="btn_save">💾 Sauvegarder</button>
         <span id="save-confirm" class="confirm-text"></span>
     </div>
 
     <div class="data-card">
-        <div class="data-row">
-            <span>Prix de vente :</span>
-            <span class="price" id="display-price">-- €</span>
-        </div>
-        <div class="data-row">
-            <span>Marge Nette :</span>
-            <span class="margin" id="display-margin">--</span>
+        <div class="data-row"><span data-i18n="text_price">Prix de vente :</span><span class="price" id="display-price">--</span></div>
+        <div class="data-row"><span data-i18n="text_bsr">Classement (BSR) :</span><span class="bsr-text" id="display-bsr">--</span></div>
+        <div class="data-row" style="border-top: 1px solid #e5e7eb; margin-top: 8px; padding-top: 8px;">
+            <span data-i18n="text_margin">Marge Nette :</span><span class="margin" id="display-margin">--</span>
         </div>
     </div>
-    <button id="calc-btn" class="primary-btn">📊 Calculer la rentabilité</button>
-    <button id="stock-btn" class="danger-btn">🕵️ Espionner le Stock (999)</button>
-    <button id="source-btn" class="source-btn">🛒 Trouver le fournisseur (AliExpress)</button>
+
+    <button id="calc-btn" class="primary-btn" data-i18n="btn_calc">📊 Calculer la rentabilité</button>
+    <button id="stock-btn" class="danger-btn" data-i18n="btn_stock">🕵️ Espionner le Stock (999)</button>
+    <button id="source-btn" class="source-btn" data-i18n="btn_source">🛒 Trouver le fournisseur</button>
     
-    <div id="stock-result"></div>
     <div id="stock-result"></div>
 
     <script src="popup.js"></script>
